@@ -13,5 +13,5 @@ urlpatterns = [
     path('', include(router.urls)),
     path('api-auth/', include('rest_framework.urls')),
     path('api-token-auth/', views.CustomObtainAuthToken.as_view(), name='api_auth_token'),
-    path('api-logout/', views.LogoutView.as_view(), name='api_logout'),
+    path('api-logout/', views.LogoutView.as_view(), name='logout'),
 ]
