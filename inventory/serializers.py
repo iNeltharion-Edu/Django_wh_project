@@ -14,7 +14,7 @@ class UserSerializer(serializers.ModelSerializer):
         user = User(
             username=validated_data['username'],
             email=validated_data['email'],
-            role=validated_data['role']
+            role=validated_data.get('role')
         )
         user.set_password(validated_data['password'])
         user.save()
@@ -26,6 +26,16 @@ class WarehouseSerializer(serializers.ModelSerializer):
         fields = ['id', 'name', 'location', 'owner']
 
 class ProductSerializer(serializers.ModelSerializer):
+    warehouse_id = serializers.PrimaryKeyRelatedField(
+        queryset=Warehouse.objects.all(), source='warehouse'
+    )
+
     class Meta:
         model = Product
-        fields = ['id', 'name', 'quantity', 'warehouse']
+        fields = ['id', 'name', 'quantity', 'warehouse_id']
+
+    def validate(self, data):
+        user = self.context['request'].user
+        if user.role == 'consumer':
+            raise serializers.ValidationError("Потребитель не может добавлять товар на склад.")
+        return data
