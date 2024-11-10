@@ -37,8 +37,8 @@ class ProductSerializer(serializers.ModelSerializer):
         model = Product
         fields = ['id', 'name', 'quantity', 'warehouse_id']
 
-    def validate(self, data):
+    def validate(self, attrs):
         user = self.context['request'].user
         if user.role == 'consumer':
             raise serializers.ValidationError("Потребитель не может добавлять товар на склад.")
-        return data
+        return attrs
