@@ -30,7 +30,7 @@ class WarehouseSerializer(serializers.ModelSerializer):
 
 class ProductSerializer(serializers.ModelSerializer):
     warehouse_id = serializers.PrimaryKeyRelatedField(
-        queryset=Warehouse.objects.all(), source='warehouse'
+        queryset=Warehouse.objects.all(), source='warehouse'  # pylint: disable=no-member
     )
 
     class Meta:
