@@ -11,25 +11,26 @@ from django.contrib.auth import get_user_model
 from .models import Warehouse, Product
 from .serializers import UserSerializer, WarehouseSerializer, ProductSerializer
 import logging
+
 logger = logging.getLogger(__name__)
 
 User = get_user_model()
 
 
 class UserViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.all()
+    queryset = User.objects.all()  # pylint: disable=no-member
     serializer_class = UserSerializer
     permission_classes = [permissions.IsAuthenticated]
 
 
 class WarehouseViewSet(viewsets.ModelViewSet):
-    queryset = Warehouse.objects.all()
+    queryset = Warehouse.objects.all()  # pylint: disable=no-member
     serializer_class = WarehouseSerializer
     permission_classes = [permissions.IsAuthenticated]
 
 
 class ProductViewSet(viewsets.ModelViewSet):
-    queryset = Product.objects.all()
+    queryset = Product.objects.all()  # pylint: disable=no-member
     serializer_class = ProductSerializer
     permission_classes = [permissions.IsAuthenticated]
 
@@ -73,7 +74,7 @@ class ProductViewSet(viewsets.ModelViewSet):
             product_name = request.data.get('name')
             quantity_to_retrieve = request.data.get('quantity')
 
-        logger.info(f"Product name received: {product_name}, Quantity requested: {quantity_to_retrieve}")
+        logger.info("Product name received: %s, Quantity requested: %s", product_name, quantity_to_retrieve)
 
         if not product_name:
             return Response({"detail": "Параметр 'name' обязателен."}, status=status.HTTP_400_BAD_REQUEST)
@@ -84,10 +85,10 @@ class ProductViewSet(viewsets.ModelViewSet):
         quantity_to_retrieve = int(quantity_to_retrieve)
 
         try:
-            product = Product.objects.filter(name=product_name).first()
+            product = Product.objects.filter(name=product_name).first()  # pylint: disable=no-member
             if product is None:
-                raise Product.DoesNotExist()
-        except Product.DoesNotExist:
+                raise Product.DoesNotExist  # pylint: disable=no-member
+        except Product.DoesNotExist:  # pylint: disable=no-member
             return Response({"detail": "Товар с таким именем не найден."}, status=status.HTTP_404_NOT_FOUND)
 
         if product.quantity < quantity_to_retrieve:
@@ -98,7 +99,7 @@ class ProductViewSet(viewsets.ModelViewSet):
         product.save()
 
         warehouse = product.warehouse
-        products_in_warehouse = Product.objects.filter(warehouse=warehouse)
+        products_in_warehouse = Product.objects.filter(warehouse=warehouse)  # pylint: disable=no-member
 
         warehouse_info = {
             "warehouse_id": warehouse.id,
@@ -117,7 +118,7 @@ class ProductViewSet(viewsets.ModelViewSet):
 
 class CustomObtainAuthToken(ObtainAuthToken):
     def post(self, request, *args, **kwargs):
-        token = Token.objects.get(user__username=request.data['username'])
+        token = Token.objects.get(user__username=request.data['username'])  # pylint: disable=no-member
         return Response({'token': token.key})
 
 
@@ -127,10 +128,9 @@ def post(request):
         try:
             token.delete()
             return Response({"detail": "Успешный выход из системы"}, status=status.HTTP_200_OK)
-        except Token.DoesNotExist:
+        except Token.DoesNotExist:  # pylint: disable=no-member
             return Response({"error": "Токен не найден"}, status=status.HTTP_400_BAD_REQUEST)
-    else:
-        return Response({"error": "Не передан токен"}, status=status.HTTP_400_BAD_REQUEST)
+    return Response({"error": "Не передан токен"}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class LogoutView(APIView):
