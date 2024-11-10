@@ -30,15 +30,15 @@ class WarehouseSerializer(serializers.ModelSerializer):
 
 class ProductSerializer(serializers.ModelSerializer):
     warehouse_id = serializers.PrimaryKeyRelatedField(
-        queryset=Warehouse.objects.all(), source='warehouse'
+        queryset=Warehouse.objects.all(), source='warehouse'  # pylint: disable=no-member
     )
 
     class Meta:
         model = Product
         fields = ['id', 'name', 'quantity', 'warehouse_id']
 
-    def validate(self, data):
+    def validate(self, attrs):
         user = self.context['request'].user
         if user.role == 'consumer':
             raise serializers.ValidationError("Потребитель не может добавлять товар на склад.")
-        return data
+        return attrs
