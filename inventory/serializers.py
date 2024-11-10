@@ -4,6 +4,7 @@ from .models import Warehouse, Product
 
 User = get_user_model()
 
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
@@ -20,10 +21,12 @@ class UserSerializer(serializers.ModelSerializer):
         user.save()
         return user
 
+
 class WarehouseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Warehouse
         fields = ['id', 'name', 'location', 'owner']
+
 
 class ProductSerializer(serializers.ModelSerializer):
     warehouse_id = serializers.PrimaryKeyRelatedField(

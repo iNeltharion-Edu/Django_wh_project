@@ -24,6 +24,7 @@ class User(AbstractUser):
         verbose_name='user permissions',
     )
 
+
 class Warehouse(models.Model):
     name = models.CharField(max_length=100)
     location = models.CharField(max_length=200)
